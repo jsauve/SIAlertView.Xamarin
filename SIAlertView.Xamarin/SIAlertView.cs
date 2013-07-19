@@ -557,64 +557,64 @@ namespace SIAlert.Xamarin
             this._IsLayoutDirty = false;
 
             float height = this.PreferredHeight;
-            float left = (this.Bounds.Size.Width - Constants.CONTAINER_WIDTH) * 0.5f;
+            float left = (this.Bounds.Size.Width - ContainerWidth) * 0.5f;
             float top = (this.Bounds.Size.Height - height) * 0.5f;
             this._ContainerView.Transform = CGAffineTransform.MakeIdentity();
-            this._ContainerView.Frame = new RectangleF(left, top, Constants.CONTAINER_WIDTH, height);
+            this._ContainerView.Frame = new RectangleF(left, top, ContainerWidth, height);
             this._ContainerView.Layer.ShadowPath = UIBezierPath.FromRoundedRect(this._ContainerView.Bounds, this._ContainerView.Layer.CornerRadius).CGPath;
 
-            float y = Constants.CONTENT_PADDING_TOP;
+            float y = ContentMarginTop;
 
             if (this._TitleLabel != null)
             {
                 this._TitleLabel.Text = this.Title;
                 float h = this.HeightForTitleLabel;
-                this._TitleLabel.Frame = new RectangleF(Constants.CONTENT_PADDING_LEFT, y, this._ContainerView.Bounds.Size.Width - Constants.CONTENT_PADDING_LEFT * 2f, h);
+                this._TitleLabel.Frame = new RectangleF(ContentMarginLeft, y, this._ContainerView.Bounds.Size.Width - ContentMarginLeft * 2f, h);
                 y += h;
             }
 
             if (this._MessageLabel != null)
             {
-                if (y > Constants.CONTENT_PADDING_TOP)
+                if (y > ContentMarginTop)
                 {
                     y += ButtonMargin;
                 }
                 this._MessageLabel.Text = this._Message;
                 float h = this.HeightForMessageLabel;
-                this._MessageLabel.Frame = new RectangleF(Constants.CONTENT_PADDING_LEFT, y, this._ContainerView.Bounds.Size.Width - Constants.CONTENT_PADDING_LEFT * 2f, h);
+                this._MessageLabel.Frame = new RectangleF(ContentMarginLeft, y, this._ContainerView.Bounds.Size.Width - ContentMarginLeft * 2f, h);
                 y += h;
             }
 
             if (this._Items.Count > 0)
             {
-                if (y > Constants.CONTENT_PADDING_TOP)
+                if (y > ContentMarginTop)
                 {
                     y += ButtonMargin;
                 }
                 if (this._Items.Count == 2 && !_AlwaysStackButtons)
                 {
-                    float width = (this._ContainerView.Bounds.Size.Width - Constants.CONTENT_PADDING_LEFT * 2f - ButtonMargin) * 0.5f;
+                    float width = (this._ContainerView.Bounds.Size.Width - ContentMarginLeft * 2f - ButtonMargin) * 0.5f;
                     UIButton button = this._Buttons[0];
-                    button.Frame = new RectangleF(Constants.CONTENT_PADDING_LEFT, y, width, Constants.BUTTON_HEIGHT);
+                    button.Frame = new RectangleF(ContentMarginLeft, y, width, ButtonHeight);
                     button = this._Buttons[1];
-                    button.Frame = new RectangleF(Constants.CONTENT_PADDING_LEFT + width + ButtonMargin, y, width, Constants.BUTTON_HEIGHT);
+                    button.Frame = new RectangleF(ContentMarginLeft + width + ButtonMargin, y, width, ButtonHeight);
                 }
                 else
                 {
                     int i = 0;
                     foreach (var button in this._Buttons)
                     {
-                        button.Frame = new RectangleF(Constants.CONTENT_PADDING_LEFT, y, this._ContainerView.Bounds.Size.Width - Constants.CONTENT_PADDING_LEFT * 2f, Constants.BUTTON_HEIGHT);
+                        button.Frame = new RectangleF(ContentMarginLeft, y, this._ContainerView.Bounds.Size.Width - ContentMarginLeft * 2f, ButtonHeight);
                         if (this._Buttons.Count > 1)
                         {
                             if (i == this._Buttons.Count - 1 && this._Items[i].Type == SIAlertViewButtonType.Cancel)
                             {
                                 RectangleF rect = button.Frame;
                                 var locationY = rect.Location.Y;
-                                locationY += Constants.CANCEL_BUTTON_PADDING_TOP;
+                                locationY += CancelButtonMarginTop;
                                 button.Frame = new RectangleF(rect.Location.X, locationY, rect.Size.Width, rect.Size.Height);
                             }
-                            y += Constants.BUTTON_HEIGHT + ButtonMargin;
+                            y += ButtonHeight + ButtonMargin;
                         }
                         i++;
                     }
@@ -626,14 +626,14 @@ namespace SIAlert.Xamarin
         {
             get
             {
-                float height = Constants.CONTENT_PADDING_TOP;
+                float height = ContentMarginTop;
                 if (!string.IsNullOrWhiteSpace(this._Title))
                 {
                     height += this.HeightForTitleLabel;
                 }
                 if (!string.IsNullOrWhiteSpace(this._Message))
                 {
-                    if (height > Constants.CONTENT_PADDING_TOP)
+                    if (height > ContentMarginTop)
                     {
                         height += ButtonMargin;
                     }
@@ -641,24 +641,24 @@ namespace SIAlert.Xamarin
                 }
                 if (this._Items.Count > 0)
                 {
-                    if (height > Constants.CONTENT_PADDING_TOP)
+                    if (height > ContentMarginTop)
                     {
                         height += ButtonMargin;
                     }
                     if (this._Items.Count <= 2 && !_AlwaysStackButtons)
                     {
-                        height += Constants.BUTTON_HEIGHT;
+                        height += ButtonHeight;
                     }
                     else
                     {
-                        height += (Constants.BUTTON_HEIGHT + ButtonMargin) * this._Items.Count - ButtonMargin;
+                        height += (ButtonHeight + ButtonMargin) * this._Items.Count - ButtonMargin;
                         if (this._Buttons.Count > 2 && this._Items.Last().Type == SIAlertViewButtonType.Cancel)
                         {
-                            height += Constants.CANCEL_BUTTON_PADDING_TOP;
+                            height += CancelButtonMarginTop;
                         }
                     }
                 }
-                height += Constants.CONTENT_PADDING_BOTTOM;
+                height += ContentMarginBottom;
                 return height;
             }
         }
@@ -671,7 +671,7 @@ namespace SIAlert.Xamarin
                 {
                     float minFontSize;
 
-                    float forWidth = Constants.CONTAINER_WIDTH - Constants.CONTENT_PADDING_LEFT * 2;
+                    float forWidth = ContainerWidth - ContentMarginLeft * 2;
 
                     if (Int32.Parse(UIDevice.CurrentDevice.SystemVersion.Split('.')[0]) < 6)
                         minFontSize = this._TitleLabel.MinimumFontSize;
@@ -692,17 +692,17 @@ namespace SIAlert.Xamarin
         {
             get
             {
-                float minHeight = Constants.MESSAGE_MIN_LINE_COUNT * this._MessageLabel.Font.LineHeight;
+                float minHeight = MinimumMessageLineCount * this._MessageLabel.Font.LineHeight;
 
                 if (_MessageLabel != null)
                 {
-                    float maxHeight = Constants.MESSAGE_MAX_LINE_COUNT * this._MessageLabel.Font.LineHeight;
+                    float maxHeight = MaximumMessageLineCount * this._MessageLabel.Font.LineHeight;
 
                     SizeF size =
                         new NSString(_Message)
                         .StringSize(
                             _MessageLabel.Font,
-                            new SizeF(Constants.CONTAINER_WIDTH - Constants.CONTENT_PADDING_LEFT * 2, maxHeight),
+                            new SizeF(ContainerWidth - ContentMarginLeft * 2, maxHeight),
                             _MessageLabel.LineBreakMode);
 
                     return Math.Max(minHeight, size.Height);
@@ -870,7 +870,7 @@ namespace SIAlert.Xamarin
                     this._MessageLabel.BackgroundColor = UIColor.Clear;
                     this._MessageLabel.Font = this.MessageFont;
                     this._MessageLabel.TextColor = this.MessageColor;
-                    this._MessageLabel.Lines = Constants.MESSAGE_MAX_LINE_COUNT;
+                    this._MessageLabel.Lines = MaximumMessageLineCount;
                     this._ContainerView.AddSubview(this._MessageLabel);
                 }
 

@@ -40,7 +40,7 @@ namespace SIAlert.Xamarin.Test
                 alert.TransitionStyle = SIAlertViewTransitionStyle.DropDown;
                 alert.CornerRadius = 10f;
                 alert.ShadowRadius = 0f;
-                alert.AlwaysStackButtons = true;
+                alert.AlwaysStackButtons = false;
 
                 //// Customize the alert view with these nifty properties!
                 ///*
@@ -54,14 +54,23 @@ namespace SIAlert.Xamarin.Test
                 //alert.ShadowRadius = 15f; // change the alert view box shadow radius. Default is 8f.
                 //alert.TransitionStyle =  // default is SIAlertViewTransitionStyleSlideFromBottom
                 //alert.BackgroundStyle =  // default is SIAlertViewButtonTypeGradient
+                //alert.ContainerWidth = 200f;
+                //alert.ButtonHeight = 30f;
+                //alert.ButtonMargin = 5f;
+                //alert.CancelButtonMarginTop = 15f;
+                //alert.ContentMarginLeft = 20f;
+                //alert.ContentMarginTop = 20f;
+                //alert.ContentMarginBottom = 20f;
+                //alert.MinimumMessageLineCount = 2;
+                //alert.MaximumMessageLineCount = 10;
                 //*/
 
                 // Add a normal button that simply dismisses the alert view
-                alert.AddButton("Button 1", SIAlertViewButtonType.Default, (x) => { });
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
                 
-                alert.AddButton("Button 3", SIAlertViewButtonType.Destructive, (x) => { });
+                alert.AddButton("Bugger Off", SIAlertViewButtonType.Destructive, (x) => { });
 
-                alert.AddButton("Button 2", SIAlertViewButtonType.Cancel, (x) => { });
+                //alert.AddButton("Button 3", SIAlertViewButtonType.Cancel, (x) => { });
 
                 // show it!
                 alert.Show();
