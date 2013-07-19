@@ -142,11 +142,12 @@ namespace SIAlert.Xamarin
 
         public void AddButton(string title, SIAlertViewButtonType type)
         {
-            SIAlertItem item = new SIAlertItem();
-            item.Title = title;
-            item.Type = type;
-            item.Action = null;
-            _Items.Add(item);
+            AddButton(title, type, null);
+        }
+
+        public void AddButton(SIAlertItem alertItem)
+        {
+            _Items.Add(alertItem);
         }
 
         public void Show()
@@ -910,36 +911,69 @@ namespace SIAlert.Xamarin
             UIImage normalImage = null;
             UIImage highlightedImage = null;
 
-            switch (item.Type)
+            // both custom background images images must be present, otherwise we use the defaults
+            if (item.BackgroundImageNormal == null || item.BackgroundImageHighlighted == null)
             {
-                case SIAlertViewButtonType.Cancel:
-                    normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-cancel");
-                    highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-cancel-d");
-                    button.SetTitleColor(UIColor.FromWhiteAlpha(0.3f, 1f), UIControlState.Normal);
-                    button.SetTitleColor(UIColor.FromWhiteAlpha(0.3f, 1f), UIControlState.Highlighted);
-                    break;
-                case SIAlertViewButtonType.Destructive:
-                    normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-destructive");
-                    highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-destructive-d");
-                    button.SetTitleColor(UIColor.White, UIControlState.Normal);
-                    button.SetTitleColor(UIColor.FromWhiteAlpha(1f, 0.8f), UIControlState.Highlighted);
-                    break;
-                case SIAlertViewButtonType.Default:
-                default:
-                    normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-default");
-                    highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-default-d");
-                    button.SetTitleColor(UIColor.FromWhiteAlpha(0.4f, 1f), UIControlState.Normal);
-                    button.SetTitleColor(UIColor.FromWhiteAlpha(0.4f, 0.8f), UIControlState.Highlighted);
-                    break;
+                switch (item.Type)
+                {
+                    case SIAlertViewButtonType.Cancel:
+                        normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-cancel");
+                        highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-cancel-d");
+                        button.SetTitleColor(UIColor.FromWhiteAlpha(0.3f, 1f), UIControlState.Normal);
+                        button.SetTitleColor(UIColor.FromWhiteAlpha(0.3f, 1f), UIControlState.Highlighted);
+                        break;
+                    case SIAlertViewButtonType.Destructive:
+                        normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-destructive");
+                        highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-destructive-d");
+                        button.SetTitleColor(UIColor.White, UIControlState.Normal);
+                        button.SetTitleColor(UIColor.FromWhiteAlpha(1f, 0.8f), UIControlState.Highlighted);
+                        break;
+                    case SIAlertViewButtonType.Default:
+                    default:
+                        normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-default");
+                        highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-default-d");
+                        button.SetTitleColor(UIColor.FromWhiteAlpha(0.4f, 1f), UIControlState.Normal);
+                        button.SetTitleColor(UIColor.FromWhiteAlpha(0.4f, 0.8f), UIControlState.Highlighted);
+                        break;
+                }
+            }
+            else
+            {
+                normalImage = item.BackgroundImageNormal;
+                highlightedImage = item.BackgroundImageHighlighted;
             }
 
-            float hInset = (float)Math.Floor(normalImage.Size.Width / 2);
-            float vInset = (float)Math.Floor(normalImage.Size.Height / 2);
-            UIEdgeInsets insets = new UIEdgeInsets(vInset, hInset, vInset, hInset);
-            normalImage = normalImage.CreateResizableImage(insets);
-            highlightedImage = highlightedImage.CreateResizableImage(insets);
-            button.SetBackgroundImage(normalImage, UIControlState.Normal);
-            button.SetBackgroundImage(highlightedImage, UIControlState.Highlighted);
+            // both images must be present, othrwise we'll fall back to the specified background color
+            if (normalImage != null && highlightedImage != null)
+            {
+                float hInset = (float)Math.Floor(normalImage.Size.Width / 2);
+                float vInset = (float)Math.Floor(normalImage.Size.Height / 2);
+                UIEdgeInsets insets = new UIEdgeInsets(vInset, hInset, vInset, hInset);
+                if (normalImage != null)
+                {
+                    normalImage = normalImage.CreateResizableImage(insets);
+                    button.SetBackgroundImage(normalImage, UIControlState.Normal);
+                }
+                if (highlightedImage != null)
+                {
+                    highlightedImage = highlightedImage.CreateResizableImage(insets);
+                    button.SetBackgroundImage(highlightedImage, UIControlState.Highlighted);
+                }
+            }
+            else if (item.BackgroundColor != null)
+            {
+                button.BackgroundColor = item.BackgroundColor;
+            }
+
+            if (item.TextColorNormal != null)
+            {
+                button.SetTitleColor(item.TextColorNormal, UIControlState.Normal);
+            }
+            if (item.TextColorHIghlighted != null)
+            {
+                button.SetTitleColor(item.TextColorHIghlighted, UIControlState.Highlighted);
+            }
+            
             button.TouchUpInside += (o, s) => { ButtonAction(button); };
             return button;
         }
