@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
-namespace SIAlertView.Xamarin.Test
+namespace SIAlert.Xamarin.Test
 {
     [Register("AppDelegate")]
     public partial class AppDelegate : UIApplicationDelegate

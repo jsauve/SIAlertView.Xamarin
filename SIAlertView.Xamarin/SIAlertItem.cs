@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SIAlertView.Xamarin
+namespace SIAlert.Xamarin
 {
     public class SIAlertItem
     {

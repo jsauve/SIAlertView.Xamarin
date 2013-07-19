@@ -3,11 +3,11 @@ using MonoTouch.CoreGraphics;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
-namespace SIAlertView.Xamarin
+namespace SIAlert.Xamarin
 {
     public class SIAlertView : UIView
     {
@@ -31,6 +31,17 @@ namespace SIAlertView.Xamarin
         public float ShadowRadius { get; set; }
         public SIAlertViewTransitionStyle TransitionStyle { get; set; } // default is SIAlertViewTransitionStyleSlideFromBottom
         public SIAlertViewBackgroundStyle BackgroundStyle { get; set; } // default is SIAlertViewButtonTypeGradient
+
+        private static Random _Random = new Random();
+
+        private static Func<float> GetRandomAngle = () =>
+        {
+            double range = (double)100f - (double)0f;
+            double sample = _Random.NextDouble();
+            double scaled = (sample * range) + float.MinValue;
+            float f = (float)scaled;
+            return (f - 50f) / 100f;
+        };
 
         /// <summary>
         /// Instantiate SIAlertView without a title or message
@@ -94,20 +105,29 @@ namespace SIAlertView.Xamarin
             _Items.Add(item);
         }
 
+        public void AddButton(string title, SIAlertViewButtonType type)
+        {
+            SIAlertItem item = new SIAlertItem();
+            item.Title = title;
+            item.Type = type;
+            item.Action = null;
+            _Items.Add(item);
+        }
+
         public void Show()
         {
             _OldKeyWindow = UIApplication.SharedApplication.KeyWindow;
 
-            if (!SIAlertView.SharedQueue.Contains(this))
+            if (!SharedQueue.Contains(this))
             {
-                SIAlertView.SharedQueue.Add(this);
+                SharedQueue.Add(this);
             }
-    
-            if (SIAlertView.IsAnimating)
+
+            if (IsAnimating)
             {
                 return; // wait for next turn
             }
-    
+
             if (_IsVisible)
             {
                 return;
@@ -115,29 +135,29 @@ namespace SIAlertView.Xamarin
 
             if (CurrentAlertView != null && CurrentAlertView.IsVisible)
             {
-                SIAlertView alert = SIAlertView.CurrentAlertView;
+                SIAlertView alert = CurrentAlertView;
                 alert.DismissAnimated(true, false);
                 return;
             }
-    
+
             if (this.WillShowHandler != null)
             {
                 this.WillShowHandler.Invoke(this);
             }
 
             NSNotificationCenter.DefaultCenter.PostNotificationName(Constants.SIAlertViewWillShowNotification, this, null);
-    
+
             this._IsVisible = true;
 
-            SIAlertView.SetAnimating(true);
-            SIAlertView.SetCurrentAlertView(this);
-    
+            SetAnimating(true);
+            SetCurrentAlertView(this);
+
             // transition background
-            SIAlertView.ShowBackground();
-    
+            this.ShowBackground();
+
             SIAlertVIewController viewController = new SIAlertVIewController();
             viewController.AlertView = this;
-    
+
             if (this._AlertWindow == null)
             {
                 UIWindow window = new UIWindow(UIScreen.MainScreen.Bounds);
@@ -149,10 +169,11 @@ namespace SIAlertView.Xamarin
             }
 
             this._AlertWindow.MakeKeyAndVisible();
-    
+
             this.ValidateLayout();
 
-            this.TransitionInCompletion(() => {
+            this.TransitionInCompletion(() =>
+            {
                 if (this.DidShowHandler != null)
                 {
                     this.DidShowHandler.Invoke(this);
@@ -160,10 +181,10 @@ namespace SIAlertView.Xamarin
 
                 NSNotificationCenter.DefaultCenter.PostNotificationName(Constants.SIAlertViewDidShowNotification, this, null);
 
-                SIAlertView.SetAnimating(false);
+                SetAnimating(false);
 
-                int index = SIAlertView.SharedQueue.IndexOf(this);
-                if (index < SIAlertView.SharedQueue.Count - 1)
+                int index = SharedQueue.IndexOf(this);
+                if (index < SharedQueue.Count - 1)
                 {
                     this.DismissAnimated(true, false);
                 }
@@ -197,21 +218,21 @@ namespace SIAlertView.Xamarin
 
             if (animated && isVisible)
             {
-                SIAlertView.SetAnimating(true);
+                SetAnimating(true);
                 this.TransitionOutCompletion(() => DismissComplete(cleanup));
 
-                if (SIAlertView.SharedQueue.Count == 1)
+                if (SharedQueue.Count == 1)
                 {
-                    SIAlertView.HideBackgroundAnimated(true);
+                    HideBackgroundAnimated(true);
                 }
             }
             else
             {
                 DismissComplete(cleanup);
 
-                if (SIAlertView.SharedQueue.Count == 0)
+                if (SharedQueue.Count == 0)
                 {
-                    SIAlertView.HideBackgroundAnimated(true);
+                    HideBackgroundAnimated(true);
                 }
             }
 
@@ -225,21 +246,21 @@ namespace SIAlertView.Xamarin
 
             this.TearDown();
 
-            SIAlertView.SetCurrentAlertView(null);
+            SetCurrentAlertView(null);
 
             SIAlertView nextAlertView = null;
-            int index = SIAlertView.SharedQueue.IndexOf(this);
-            if (index > -1 && index < SIAlertView.SharedQueue.Count() - 1)
+            int index = SharedQueue.IndexOf(this);
+            if (index > -1 && index < SharedQueue.Count() - 1)
             {
-                nextAlertView = SIAlertView.SharedQueue[index + 1];
+                nextAlertView = SharedQueue[index + 1];
             }
 
             if (cleanup)
             {
-                SIAlertView.SharedQueue.Remove(this);
+                SharedQueue.Remove(this);
             }
 
-            SIAlertView.SetAnimating(false);
+            SetAnimating(false);
 
             if (_IsVisible)
             {
@@ -263,9 +284,9 @@ namespace SIAlertView.Xamarin
             else
             {
                 // show last alert view
-                if (SIAlertView.SharedQueue.Count > 0)
+                if (SharedQueue.Count > 0)
                 {
-                    SIAlertView alert = SIAlertView.SharedQueue.Last();
+                    SIAlertView alert = SharedQueue.Last();
                     alert.Show();
                 }
             }
@@ -278,49 +299,51 @@ namespace SIAlertView.Xamarin
 
             Func<string, CAMediaTimingFunction> t = (s) => { return CAMediaTimingFunction.FromName(s); };
 
-            switch (this.TransitionStyle) 
+            switch (this.TransitionStyle)
             {
                 case SIAlertViewTransitionStyle.SlideFromBottom:
-                {
-                    RectangleF originalRect = this._ContainerView.Frame;
-                    RectangleF rect = originalRect;
-                    float locationY = this.Bounds.Size.Height;
-                    this._ContainerView.Frame = new RectangleF(rect.Location.X, locationY, rect.Size.Width, rect.Size.Height);
-                    UIView.Animate(
-                        duration: 0.3f, 
-                        delay: 0f, 
-                        options: UIViewAnimationOptions.CurveEaseInOut, 
-                        animation: () => { this._ContainerView.Frame = originalRect; }, 
-                        completion: () => { if (action != null )action.Invoke(); });
-                }
-                break;
+                    {
+                        RectangleF originalRect = this._ContainerView.Frame;
+                        RectangleF rect = originalRect;
+                        float locationY = this.Bounds.Size.Height;
+                        rect = new RectangleF(rect.Location.X, locationY, rect.Size.Width, rect.Size.Height);
+                        this._ContainerView.Frame = rect;
+                        UIView.Animate(
+                            duration: 0.3f,
+                            delay: 0f,
+                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            animation: () => { this._ContainerView.Frame = originalRect; },
+                            completion: () => { if (action != null) action.Invoke(); });
+                    }
+                    break;
 
                 case SIAlertViewTransitionStyle.SlideFromTop:
-                {
-                    RectangleF rect = this._ContainerView.Frame;
-                    RectangleF originalRect = rect;
-                    float locationY = -rect.Size.Height;
-                    this._ContainerView.Frame = new RectangleF(rect.Location.X, locationY, rect.Size.Width, rect.Size.Height);
-                    UIView.Animate(
-                        duration: 0.3f,
-                        delay: 0f,
-                        options: UIViewAnimationOptions.CurveEaseInOut,
-                        animation: () => { this._ContainerView.Frame = originalRect; },
-                        completion: () => { if (action != null )action.Invoke(); });
-                }
-                break;
+                    {
+                        RectangleF rect = this._ContainerView.Frame;
+                        RectangleF originalRect = rect;
+                        float locationY = -rect.Size.Height;
+                        rect = new RectangleF(rect.Location.X, locationY, rect.Size.Width, rect.Size.Height);
+                        this._ContainerView.Frame = rect;
+                        UIView.Animate(
+                            duration: 0.3f,
+                            delay: 0f,
+                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            animation: () => { this._ContainerView.Frame = originalRect; },
+                            completion: () => { if (action != null) action.Invoke(); });
+                    }
+                    break;
 
                 case SIAlertViewTransitionStyle.Fade:
-                {
-                    this._ContainerView.Alpha = 0f;
-                    UIView.Animate(
-                        duration: 0.3f,
-                        delay: 0f,
-                        options: UIViewAnimationOptions.CurveEaseInOut,
-                        animation: () => { this._ContainerView.Alpha = 1f; },
-                        completion: () => { if (action != null )action.Invoke(); });
-                }
-                break;
+                    {
+                        this._ContainerView.Alpha = 0f;
+                        UIView.Animate(
+                            duration: 0.3f,
+                            delay: 0f,
+                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            animation: () => { this._ContainerView.Alpha = 1f; },
+                            completion: () => { if (action != null) action.Invoke(); });
+                    }
+                    break;
 
                 // These two remaining transition styles are not yet supported because I have not yet figured how to properly wire up the Delegate property on CAKeyFrameAnimation
 
@@ -359,14 +382,107 @@ namespace SIAlertView.Xamarin
                 //}
                 //break;
 
+                // for now, has the same body as the SlideFromTop case;
+                case SIAlertViewTransitionStyle.DropDown:
+                    {
+                        RectangleF rect = this._ContainerView.Frame;
+                        RectangleF originalRect = rect;
+                        float locationY = -rect.Size.Height;
+                        rect = new RectangleF(rect.Location.X, locationY, rect.Size.Width, rect.Size.Height);
+                        this._ContainerView.Frame = rect;
+                        UIView.Animate(
+                            duration: 0.3f,
+                            delay: 0f,
+                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            animation: () => { this._ContainerView.Frame = originalRect; },
+                            completion: () => { if (action != null) action.Invoke(); });
+                    }
+                    break;
+
                 default:
-                break;
+                    break;
             }
         }
 
         public void TransitionOutCompletion(NSAction action)
         {
-            action.Invoke();
+            switch (this.TransitionStyle)
+            {
+                case SIAlertViewTransitionStyle.SlideFromBottom:
+                    {
+                        RectangleF rect = this._ContainerView.Frame;
+                        var locationY = this.Bounds.Size.Height;
+                        rect = new RectangleF(rect.Location.X, locationY, rect.Size.Width, rect.Size.Height);
+                        UIView.Animate(
+                            duration: 0.3f,
+                            delay: 0f,
+                            options: UIViewAnimationOptions.CurveEaseIn,
+                            animation: () => { this._ContainerView.Frame = rect; },
+                            completion: () => { if (action != null) action.Invoke(); });
+                    }
+                    break;
+
+                case SIAlertViewTransitionStyle.SlideFromTop:
+                    {
+                        RectangleF rect = this._ContainerView.Frame;
+                        var locationY = -rect.Size.Height;
+                        rect = new RectangleF(rect.Location.X, locationY, rect.Size.Width, rect.Size.Height);
+                        UIView.Animate(
+                            duration: 0.3f,
+                            delay: 0f,
+                            options: UIViewAnimationOptions.CurveEaseIn,
+                            animation: () => { this._ContainerView.Frame = rect; },
+                            completion: () => { if (action != null) action.Invoke(); });
+                    }
+                    break;
+
+                case SIAlertViewTransitionStyle.Fade:
+                    {
+                        UIView.Animate(
+                            duration: 0.25f,
+                            delay: 0f,
+                            options: UIViewAnimationOptions.TransitionNone,
+                            animation: () => { this._ContainerView.Alpha = 0f; },
+                            completion: () => { if (action != null) action.Invoke(); });
+                    }
+                    break;
+
+                //case SIAlertViewTransitionStyle,Bounce:
+                //{
+                //    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform.scale"];
+                //    animation.values = @[@(1), @(1.2), @(0.01)];
+                //    animation.keyTimes = @[@(0), @(0.4), @(1)];
+                //    animation.timingFunctions = @[[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut], [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut]];
+                //    animation.duration = 0.35;
+                //    animation.delegate = self;
+                //    [animation setValue:completion forKey:@"handler"];
+                //    [self.containerView.layer addAnimation:animation forKey:@"bounce"];
+
+                //    self.containerView.transform = CGAffineTransformMakeScale(0.01, 0.01);
+                //}
+                //    break;
+
+                case SIAlertViewTransitionStyle.DropDown:
+                    {
+                        PointF point = this._ContainerView.Center;
+                        point.Y += this.Bounds.Size.Height;
+                        UIView.Animate(
+                            duration: 0.3f,
+                            delay: 0f,
+                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            animation: () =>
+                            {
+                                this._ContainerView.Center = point;
+                                float angle = GetRandomAngle();
+                                this._ContainerView.Transform = CGAffineTransform.MakeRotation(angle);
+                            },
+                            completion: () => { if (action != null) action.Invoke(); });
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         public void InvalidateLayout()
@@ -400,18 +516,18 @@ namespace SIAlertView.Xamarin
 
         public void ValidateLayout()
         {
-            if (!this._IsLayoutDirty) 
+            if (!this._IsLayoutDirty)
                 return;
-            
+
             this._IsLayoutDirty = false;
-    
+
             float height = this.PreferredHeight;
             float left = (this.Bounds.Size.Width - Constants.CONTAINER_WIDTH) * 0.5f;
             float top = (this.Bounds.Size.Height - height) * 0.5f;
             this._ContainerView.Transform = CGAffineTransform.MakeIdentity();
             this._ContainerView.Frame = new RectangleF(left, top, Constants.CONTAINER_WIDTH, height);
             this._ContainerView.Layer.ShadowPath = UIBezierPath.FromRoundedRect(this._ContainerView.Bounds, this._ContainerView.Layer.CornerRadius).CGPath;
-    
+
             float y = Constants.CONTENT_PADDING_TOP;
 
             if (this._TitleLabel != null)
@@ -451,7 +567,7 @@ namespace SIAlertView.Xamarin
                 else
                 {
                     int i = 0;
-                    foreach(var button in this._Buttons)
+                    foreach (var button in this._Buttons)
                     {
                         button.Frame = new RectangleF(Constants.CONTENT_PADDING_LEFT, y, this._ContainerView.Bounds.Size.Width - Constants.CONTENT_PADDING_LEFT * 2f, Constants.BUTTON_HEIGHT);
                         if (this._Buttons.Count > 1)
@@ -476,30 +592,39 @@ namespace SIAlertView.Xamarin
             get
             {
                 float height = Constants.CONTENT_PADDING_TOP;
-	            if (!string.IsNullOrWhiteSpace(this._Title)) {
-		            height += this.HeightForTitleLabel;
-	            }
-                if (!string.IsNullOrWhiteSpace(this._Message)) {
-                    if (height > Constants.CONTENT_PADDING_TOP) {
+                if (!string.IsNullOrWhiteSpace(this._Title))
+                {
+                    height += this.HeightForTitleLabel;
+                }
+                if (!string.IsNullOrWhiteSpace(this._Message))
+                {
+                    if (height > Constants.CONTENT_PADDING_TOP)
+                    {
                         height += Constants.GAP;
                     }
                     height += this.HeightForMessageLabel;
                 }
-                if (this._Items.Count > 0) {
-                    if (height > Constants.CONTENT_PADDING_TOP) {
+                if (this._Items.Count > 0)
+                {
+                    if (height > Constants.CONTENT_PADDING_TOP)
+                    {
                         height += Constants.GAP;
                     }
-                    if (this._Items.Count <= 2) {
+                    if (this._Items.Count <= 2)
+                    {
                         height += Constants.BUTTON_HEIGHT;
-                    } else {
+                    }
+                    else
+                    {
                         height += (Constants.BUTTON_HEIGHT + Constants.GAP) * this._Items.Count - Constants.GAP;
-                        if (this._Buttons.Count > 2 && this._Items.Last().Type == SIAlertViewButtonType.Cancel) {
+                        if (this._Buttons.Count > 2 && this._Items.Last().Type == SIAlertViewButtonType.Cancel)
+                        {
                             height += Constants.CANCEL_BUTTON_PADDING_TOP;
                         }
                     }
                 }
                 height += Constants.CONTENT_PADDING_BOTTOM;
-	            return height;
+                return height;
             }
         }
 
@@ -534,14 +659,14 @@ namespace SIAlertView.Xamarin
             {
                 float minHeight = Constants.MESSAGE_MIN_LINE_COUNT * this._MessageLabel.Font.LineHeight;
 
-                if (_MessageLabel != null) 
+                if (_MessageLabel != null)
                 {
                     float maxHeight = Constants.MESSAGE_MAX_LINE_COUNT * this._MessageLabel.Font.LineHeight;
 
-                    SizeF size = 
+                    SizeF size =
                         new NSString(_Message)
                         .StringSize(
-                            _MessageLabel.Font, 
+                            _MessageLabel.Font,
                             new SizeF(Constants.CONTAINER_WIDTH - Constants.CONTENT_PADDING_LEFT * 2, maxHeight),
                             _MessageLabel.LineBreakMode);
 
@@ -569,52 +694,65 @@ namespace SIAlertView.Xamarin
         }
 
         private static SIAlertView _CurrentAlertView;
-        public static SIAlertView CurrentAlertView
+        private static SIAlertView CurrentAlertView
         {
             get { return _CurrentAlertView; }
         }
 
-        public static void SetCurrentAlertView(SIAlertView alertView)
+        private static void SetCurrentAlertView(SIAlertView alertView)
         {
             _CurrentAlertView = alertView;
         }
 
-        public static bool IsAnimating
+        private static bool IsAnimating
         {
             get { return _IsAnimating; }
         }
 
-        public static void SetAnimating(bool animating)
+        private static void SetAnimating(bool animating)
         {
             _IsAnimating = animating;
         }
 
-        public static void ShowBackground()
+        public void ShowBackground()
         {
             if (_BackgroundWindow == null)
             {
-                _BackgroundWindow = new SIAlertBackgroundWindow(SIAlertView.CurrentAlertView.BackgroundStyle, UIScreen.MainScreen.Bounds);
+                _BackgroundWindow = new SIAlertBackgroundWindow(CurrentAlertView.BackgroundStyle, UIScreen.MainScreen.Bounds);
                 _BackgroundWindow.MakeKeyAndVisible();
-                _BackgroundWindow.Alpha = 0;
-                UIView.Animate(0.3, () => { _BackgroundWindow.Alpha = 1; });
+                _BackgroundWindow.Alpha = 0f;
+                UIView.Animate(
+                    duration: 0.3f,
+                    delay: 0f, options: UIViewAnimationOptions.CurveEaseInOut,
+                    animation: () => { _BackgroundWindow.Alpha = 1; },
+                    completion: () => { });
             }
         }
 
-        public static void HideBackgroundAnimated(bool animated)
+        public void HideBackgroundAnimated(bool animated)
         {
-            if (!animated)
+            if (_BackgroundWindow != null)
             {
-                _BackgroundWindow.RemoveFromSuperview();
-                _BackgroundWindow = null;
-                return;
-            }
+                if (!animated)
+                {
+                    _BackgroundWindow.RemoveFromSuperview();
+                    _BackgroundWindow = null;
+                    return;
+                }
 
-            UIView.Animate(
-                0.3,
-                0,
-                UIViewAnimationOptions.CurveEaseInOut,
-                () => { _BackgroundWindow.Alpha = 0; },
-                () => { _BackgroundWindow.RemoveFromSuperview(); _BackgroundWindow = null; });
+                UIView.Animate(
+                    duration: 0.3f,
+                    delay: 0f,
+                    options: UIViewAnimationOptions.CurveEaseInOut,
+                    animation: () => { _BackgroundWindow.Alpha = 0; },
+                    completion: () => {
+                        if (_BackgroundWindow != null)
+                        {
+                            _BackgroundWindow.RemoveFromSuperview();
+                            _BackgroundWindow = null;
+                        }
+                    });
+            }
         }
 
         public void Setup()
@@ -656,14 +794,14 @@ namespace SIAlertView.Xamarin
 
         public void UpdateTitleLabel()
         {
-	        if (!string.IsNullOrWhiteSpace(this._Title)) 
+            if (!string.IsNullOrWhiteSpace(this._Title))
             {
-		        if (this._TitleLabel == null)
+                if (this._TitleLabel == null)
                 {
                     this._TitleLabel = new UILabel(this.Bounds);
-			        this._TitleLabel.TextAlignment = UITextAlignment.Center;
+                    this._TitleLabel.TextAlignment = UITextAlignment.Center;
                     this._TitleLabel.BackgroundColor = UIColor.Clear;
-			        this._TitleLabel.Font = TitleFont;
+                    this._TitleLabel.Font = TitleFont;
                     this._TitleLabel.TextColor = TitleColor;
                     this._TitleLabel.AdjustsFontSizeToFitWidth = true;
 
@@ -673,24 +811,24 @@ namespace SIAlertView.Xamarin
                         this._TitleLabel.MinimumScaleFactor = this._TitleLabel.Font.PointSize * 0.75f;
 
                     this._ContainerView.AddSubview(this._TitleLabel);
-		        }
+                }
 
                 this._TitleLabel.Text = this._Title;
-	        } 
-            else 
+            }
+            else
             {
                 this._TitleLabel.RemoveFromSuperview();
                 this._TitleLabel = null;
-	        }
+            }
 
             this.InvalidateLayout();
         }
 
         public void UpdateMessageLabel()
         {
-            if (!String.IsNullOrWhiteSpace(this._Message)) 
+            if (!String.IsNullOrWhiteSpace(this._Message))
             {
-                if (this._MessageLabel == null) 
+                if (this._MessageLabel == null)
                 {
                     this._MessageLabel = new UILabel(this.Bounds);
                     this._MessageLabel.TextAlignment = UITextAlignment.Center;
@@ -702,8 +840,8 @@ namespace SIAlertView.Xamarin
                 }
 
                 this._MessageLabel.Text = this._Message;
-            } 
-            else 
+            }
+            else
             {
                 this._MessageLabel.RemoveFromSuperview();
                 this._MessageLabel = null;
@@ -737,27 +875,27 @@ namespace SIAlertView.Xamarin
             UIImage normalImage = null;
             UIImage highlightedImage = null;
 
-            switch(item.Type)
+            switch (item.Type)
             {
                 case SIAlertViewButtonType.Cancel:
-			        normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-cancel");
-			        highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-cancel-d");
+                    normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-cancel");
+                    highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-cancel-d");
                     button.SetTitleColor(UIColor.FromWhiteAlpha(0.3f, 1f), UIControlState.Normal);
                     button.SetTitleColor(UIColor.FromWhiteAlpha(0.3f, 1f), UIControlState.Highlighted);
-			        break;
-		        case SIAlertViewButtonType.Destructive:
-			        normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-destructive");
-			        highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-destructive-d");
+                    break;
+                case SIAlertViewButtonType.Destructive:
+                    normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-destructive");
+                    highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-destructive-d");
                     button.SetTitleColor(UIColor.White, UIControlState.Normal);
                     button.SetTitleColor(UIColor.FromWhiteAlpha(1f, 0.8f), UIControlState.Highlighted);
-			        break;
-		        case SIAlertViewButtonType.Default:
-		        default:
-			        normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-default");
-			        highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-default-d");
+                    break;
+                case SIAlertViewButtonType.Default:
+                default:
+                    normalImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-default");
+                    highlightedImage = UIImage.FromBundle(@"Images/SIAlertView.bundle/button-default-d");
                     button.SetTitleColor(UIColor.FromWhiteAlpha(0.4f, 1f), UIControlState.Normal);
                     button.SetTitleColor(UIColor.FromWhiteAlpha(0.4f, 0.8f), UIControlState.Highlighted);
-			        break;
+                    break;
             }
 
             float hInset = (float)Math.Floor(normalImage.Size.Width / 2);
@@ -773,7 +911,7 @@ namespace SIAlertView.Xamarin
 
         public void ButtonAction(UIButton button)
         {
-            SIAlertView.SetAnimating(true); // set this flag to YES in order to prevent showing another alert in action block
+            SetAnimating(true); // set this flag to YES in order to prevent showing another alert in action block
             SIAlertItem item = this._Items[button.Tag];
             if (item.Action != null)
             {
@@ -781,5 +919,5 @@ namespace SIAlertView.Xamarin
             }
             this.DismissAnimated(true);
         }
-    } 
+    }
 }

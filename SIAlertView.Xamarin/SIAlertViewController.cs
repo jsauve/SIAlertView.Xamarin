@@ -1,6 +1,6 @@
 ﻿using MonoTouch.UIKit;
 
-namespace SIAlertView.Xamarin
+namespace SIAlert.Xamarin
 {
     public class SIAlertVIewController : UIViewController
     {

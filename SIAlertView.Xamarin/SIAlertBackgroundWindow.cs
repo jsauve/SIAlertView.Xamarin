@@ -3,14 +3,13 @@ using MonoTouch.UIKit;
 using System;
 using System.Drawing;
 
-namespace SIAlertView.Xamarin
+namespace SIAlert.Xamarin
 {
     public class SIAlertBackgroundWindow : UIWindow
     {
         private SIAlertViewBackgroundStyle _Style;
 
-        public SIAlertBackgroundWindow(SIAlertViewBackgroundStyle backgroundStyle, RectangleF frame)
-            : base(frame)
+        public SIAlertBackgroundWindow(SIAlertViewBackgroundStyle backgroundStyle, RectangleF frame) : base(frame)
         {
             _Style = backgroundStyle;
             AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
@@ -18,7 +17,7 @@ namespace SIAlertView.Xamarin
             WindowLevel = Constants.UIWindowLevelSIAlertBackground;
         }
 
-        public override void DrawRect(RectangleF area, UIViewPrintFormatter formatter)
+        public override void Draw(RectangleF rect)
         {
             using (CGContext context = UIGraphics.GetCurrentContext())
             {

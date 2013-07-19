@@ -1,8 +1,8 @@
-using System;
 using MonoTouch.UIKit;
+using System;
 using System.Drawing;
 
-namespace SIAlertView.Xamarin.Test
+namespace SIAlert.Xamarin.Test
 {
     public class MyViewController : UIViewController
     {
@@ -10,9 +10,7 @@ namespace SIAlertView.Xamarin.Test
         float buttonWidth = 200;
         float buttonHeight = 50;
 
-        public MyViewController()
-        {
-        }
+        public MyViewController() { }
 
         public override void ViewDidLoad()
         {
@@ -36,8 +34,12 @@ namespace SIAlertView.Xamarin.Test
 
             button.TouchUpInside += (object sender, EventArgs e) =>
             {
-                //// instantiate the alert with a title and a message
-                //SIAlertView alert = new SIAlertView("Nice work!", "Blah Blah Blah");
+                // instantiate the alert with a title and a message
+                SIAlertView alert = new SIAlertView("Nice work!", "Blah Blah Blah");
+
+                alert.TransitionStyle = SIAlertViewTransitionStyle.DropDown;
+                alert.CornerRadius = 10f;
+                alert.ShadowRadius = 0f;
 
                 //// Customize the alert view with these nifty properties!
                 ///*
@@ -53,11 +55,12 @@ namespace SIAlertView.Xamarin.Test
                 //alert.BackgroundStyle =  // default is SIAlertViewButtonTypeGradient
                 //*/
 
-                //// Add a normal button that simply dismisses the alert view
-                //alert.AddButton("OK!", SIAlertViewButtonType.Default, (x) => { x.DismissAnimated(true); });
+                // Add a normal button that simply dismisses the alert view
+                alert.AddButton("Button 1", SIAlertViewButtonType.Default, (x) => { });
+                alert.AddButton("Button 2", SIAlertViewButtonType.Cancel, (x) => { });
 
-                //// show it!
-                //alert.Show();
+                // show it!
+                alert.Show();
             };
 
             button.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin |

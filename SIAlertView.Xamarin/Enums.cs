@@ -1,4 +1,4 @@
-﻿namespace SIAlertView.Xamarin
+﻿namespace SIAlert.Xamarin
 {
     public enum SIAlertViewButtonType
     {
@@ -19,6 +19,6 @@
         SlideFromTop,
         Fade,
         //Bounce,   // Not yet supported because I have not yet figured out how to properly wire up the Delegate property on a CAKeyFrameAnimation
-        //DropDown  // Not yet supported because I have not yet figured out how to properly wire up the Delegate property on a CAKeyFrameAnimation
+        DropDown  // Not yet supported because I have not yet figured out how to properly wire up the Delegate property on a CAKeyFrameAnimation
     }
 }

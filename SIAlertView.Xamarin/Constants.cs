@@ -1,4 +1,4 @@
-﻿namespace SIAlertView.Xamarin
+﻿namespace SIAlert.Xamarin
 {
     public class Constants
     {
