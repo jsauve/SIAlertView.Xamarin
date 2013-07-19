@@ -35,7 +35,7 @@ namespace SIAlert.Xamarin.Test
             button.TouchUpInside += (object sender, EventArgs e) =>
             {
                 // instantiate the alert with a title and a message
-                SIAlertView alert = new SIAlertView("Nice work!", "Blah Blah Blah");
+                SIAlertView alert = new SIAlertView("Nice work!", "Congratulations on clicking the button! You truly are a credit to your species.");
 
                 alert.TransitionStyle = SIAlertViewTransitionStyle.DropDown;
                 alert.CornerRadius = 10f;
