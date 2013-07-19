@@ -31,3 +31,4 @@ _ReSharper*/
 AppPackages/
 *.ncrunchproject
 *.nupkg
+.DS_Store
