@@ -1,7 +1,9 @@
 # SIAlertView.Xamarin
 SIAlertView.Xamarin is a C#/Mono Xamarin.iOS port of Sumi Interactive's [SIAlertView](https://github.com/Sumi-Interactive/SIAlertView) for native iOS. It's basically a hand-rolled UIAlertView.
 
-The one thing that's not yet working is the dismissal transition effects. I'm hoping to have that fixed soon.
+A couple of the transition effects are not yet working. I'm hoping to have that fixed soon.
+
+I also need to ensure that the action delegates on the button clicks are working optimally.
 
 Feel free to fix any problems and issue a pull request! Thanks!
 
