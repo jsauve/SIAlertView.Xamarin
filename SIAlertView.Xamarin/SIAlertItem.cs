@@ -7,7 +7,7 @@ namespace SIAlert.Xamarin
     {
         public string Title { get; set; }
         public SIAlertViewButtonType Type { get; set; }
-        public Action<SIAlertView> Action { get; set; }
+        public Action Action { get; set; }
 
         public UIColor BackgroundColor { get; set; }
 
@@ -19,7 +19,7 @@ namespace SIAlert.Xamarin
 
         public SIAlertItem() { }
 
-        public SIAlertItem(string title, SIAlertViewButtonType type, Action<SIAlertView> action)
+        public SIAlertItem(string title, SIAlertViewButtonType type, Action action)
         {
             Title = title;
             Type = type;

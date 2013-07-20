@@ -72,7 +72,7 @@ namespace SIAlert.Xamarin.Test
 
             button4.SetTitle("2 buttons stacked, fade", UIControlState.Normal);
 
-            button5.SetTitle("No Message, slide up", UIControlState.Normal);
+            button5.SetTitle("No message, slide up", UIControlState.Normal);
 
 
             button1.TouchUpInside += (object sender, EventArgs e) =>
@@ -85,7 +85,7 @@ namespace SIAlert.Xamarin.Test
                 alert.ShadowRadius = 5f;
 
                 // Add a normal button that simply dismisses the alert view
-                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, () => { });
 
                 // show it!
                 alert.Show();
@@ -130,9 +130,9 @@ namespace SIAlert.Xamarin.Test
                 alert.ShadowRadius = 5f;
 
                 // Add a normal button that simply dismisses the alert view
-                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, () => { });
                 
-                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, (x) => { });
+                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, () => { });
 
                 // show it!
                 alert.Show();
@@ -154,11 +154,11 @@ namespace SIAlert.Xamarin.Test
                 alert.ShadowRadius = 5f;
 
                 // Add a normal button that simply dismisses the alert view
-                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, () => { });
                 
-                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, (x) => { });
+                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, () => { });
 
-                alert.AddButton("Cancel", SIAlertViewButtonType.Cancel, (x) => { });
+                alert.AddButton("Cancel", SIAlertViewButtonType.Cancel, () => { });
 
                 // show it!
                 alert.Show();
@@ -181,9 +181,9 @@ namespace SIAlert.Xamarin.Test
                 alert.AlwaysStackButtons = true;
 
                 // Add a normal button that simply dismisses the alert view
-                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, () => { });
                 
-                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, (x) => { });
+                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, () => { });
 
                 // show it!
                 alert.Show();
@@ -207,9 +207,9 @@ namespace SIAlert.Xamarin.Test
                 
 
                 // Add a normal button that simply dismisses the alert view
-                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, () => { });
                 
-                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, (x) => { });
+                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, () => { });
 
                 // show it!
                 alert.Show();
