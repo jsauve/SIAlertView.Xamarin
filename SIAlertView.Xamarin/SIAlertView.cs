@@ -255,6 +255,7 @@ namespace SIAlert.Xamarin
             if (animated && isVisible)
             {
                 SetAnimating(true);
+
                 this.TransitionOutCompletion(() => DismissComplete(cleanup));
 
                 if (SharedQueue.Count == 1)
@@ -347,7 +348,7 @@ namespace SIAlert.Xamarin
                         UIView.Animate(
                             duration: 0.3f,
                             delay: 0f,
-                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            options: UIViewAnimationOptions.TransitionNone,
                             animation: () => { this._ContainerView.Frame = originalRect; },
                             completion: () => { if (action != null) action.Invoke(); });
                     }
@@ -363,7 +364,7 @@ namespace SIAlert.Xamarin
                         UIView.Animate(
                             duration: 0.3f,
                             delay: 0f,
-                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            options: UIViewAnimationOptions.TransitionNone,
                             animation: () => { this._ContainerView.Frame = originalRect; },
                             completion: () => { if (action != null) action.Invoke(); });
                     }
@@ -375,7 +376,7 @@ namespace SIAlert.Xamarin
                         UIView.Animate(
                             duration: 0.3f,
                             delay: 0f,
-                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            options: UIViewAnimationOptions.TransitionNone,
                             animation: () => { this._ContainerView.Alpha = 1f; },
                             completion: () => { if (action != null) action.Invoke(); });
                     }
@@ -429,7 +430,7 @@ namespace SIAlert.Xamarin
                         UIView.Animate(
                             duration: 0.3f,
                             delay: 0f,
-                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            options: UIViewAnimationOptions.TransitionNone,
                             animation: () => { this._ContainerView.Frame = originalRect; },
                             completion: () => { if (action != null) action.Invoke(); });
                     }
@@ -477,7 +478,7 @@ namespace SIAlert.Xamarin
                         UIView.Animate(
                             duration: 0.25f,
                             delay: 0f,
-                            options: UIViewAnimationOptions.TransitionNone,
+                            options: UIViewAnimationOptions.CurveEaseIn,
                             animation: () => { this._ContainerView.Alpha = 0f; },
                             completion: () => { if (action != null) action.Invoke(); });
                     }
@@ -501,14 +502,14 @@ namespace SIAlert.Xamarin
                 case SIAlertViewTransitionStyle.DropDown:
                     {
                         PointF point = this._ContainerView.Center;
-                        point.Y += this.Bounds.Size.Height;
+                        PointF newPoint = new PointF(point.X, point.Y + this.Bounds.Size.Height);
                         UIView.Animate(
                             duration: 0.3f,
                             delay: 0f,
-                            options: UIViewAnimationOptions.CurveEaseInOut,
+                            options: UIViewAnimationOptions.CurveEaseIn,
                             animation: () =>
                             {
-                                this._ContainerView.Center = point;
+                                this._ContainerView.Center = newPoint;
                                 float angle = GetRandomAngle();
                                 this._ContainerView.Transform = CGAffineTransform.MakeRotation(angle);
                             },
@@ -853,8 +854,11 @@ namespace SIAlert.Xamarin
             }
             else
             {
-                this._TitleLabel.RemoveFromSuperview();
-                this._TitleLabel = null;
+                if (this._TitleLabel != null)
+                {
+                    this._TitleLabel.RemoveFromSuperview();
+                    this._TitleLabel = null;
+                }
             }
 
             this.InvalidateLayout();
@@ -879,8 +883,11 @@ namespace SIAlert.Xamarin
             }
             else
             {
-                this._MessageLabel.RemoveFromSuperview();
-                this._MessageLabel = null;
+                if (this._MessageLabel != null)
+                {
+                    this._MessageLabel.RemoveFromSuperview();
+                    this._MessageLabel = null;
+                }
             }
 
             this.InvalidateLayout();

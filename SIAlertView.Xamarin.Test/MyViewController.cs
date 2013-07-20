@@ -6,9 +6,14 @@ namespace SIAlert.Xamarin.Test
 {
     public class MyViewController : UIViewController
     {
-        UIButton button;
-        float buttonWidth = 200;
-        float buttonHeight = 50;
+        UIButton button1;
+        UIButton button2;
+        UIButton button3;
+        UIButton button4;
+        UIButton button5;
+
+        float buttonWidth = 250f;
+        float buttonHeight = 50f;
 
         public MyViewController() { }
 
@@ -22,27 +27,70 @@ namespace SIAlert.Xamarin.Test
             View.BackgroundColor = UIColor.White;
             View.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
 
-            button = UIButton.FromType(UIButtonType.RoundedRect);
+            button1 = UIButton.FromType(UIButtonType.RoundedRect);
+            button2 = UIButton.FromType(UIButtonType.RoundedRect);
+            button3 = UIButton.FromType(UIButtonType.RoundedRect);
+            button4 = UIButton.FromType(UIButtonType.RoundedRect);
+            button5 = UIButton.FromType(UIButtonType.RoundedRect);
 
-            button.Frame = new RectangleF(
+            button1.Frame = new RectangleF(
                 View.Frame.Width / 2 - buttonWidth / 2,
-                View.Frame.Height / 2 - buttonHeight / 2,
+                100f,
                 buttonWidth,
                 buttonHeight);
 
-            button.SetTitle("Click me", UIControlState.Normal);
+            button2.Frame = new RectangleF(
+                View.Frame.Width / 2 - buttonWidth / 2,
+                160f,
+                buttonWidth,
+                buttonHeight);
 
-            button.TouchUpInside += (object sender, EventArgs e) =>
+            button3.Frame = new RectangleF(
+                View.Frame.Width / 2 - buttonWidth / 2,
+                210f,
+                buttonWidth,
+                buttonHeight);
+
+            button4.Frame = new RectangleF(
+                View.Frame.Width / 2 - buttonWidth / 2,
+                270f,
+                buttonWidth,
+                buttonHeight);
+
+            button5.Frame = new RectangleF(
+                View.Frame.Width / 2 - buttonWidth / 2,
+                330f,
+                buttonWidth,
+                buttonHeight);
+
+
+            button1.SetTitle("1 button, slide down", UIControlState.Normal);
+
+            button2.SetTitle("2 buttons, slide up", UIControlState.Normal);
+
+            button3.SetTitle("3 buttons, slide down", UIControlState.Normal);
+
+            button4.SetTitle("2 buttons stacked, fade", UIControlState.Normal);
+
+            button5.SetTitle("No Message, slide up", UIControlState.Normal);
+
+
+            button1.TouchUpInside += (object sender, EventArgs e) =>
             {
                 // instantiate the alert with a title and a message
                 SIAlertView alert = new SIAlertView("Nice work!", "Congratulations on clicking the button! You truly are a credit to your species.");
 
-                alert.TransitionStyle = SIAlertViewTransitionStyle.DropDown;
+                alert.TransitionStyle = SIAlertViewTransitionStyle.SlideFromTop;
                 alert.CornerRadius = 10f;
-                alert.ShadowRadius = 0f;
-                alert.AlwaysStackButtons = false;
+                alert.ShadowRadius = 5f;
 
-                //// Customize the alert view with these nifty properties!
+                // Add a normal button that simply dismisses the alert view
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+
+                // show it!
+                alert.Show();
+
+                //Customize the alert view with these nifty properties!
                 ///*
                 //alert.ViewBackgroundColor = UIColor.Red;
                 //alert.TitleColor = UIColor.Blue;
@@ -64,24 +112,114 @@ namespace SIAlert.Xamarin.Test
                 //alert.MinimumMessageLineCount = 2;
                 //alert.MaximumMessageLineCount = 10;
                 //*/
+            };
+
+            button1.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin |
+                UIViewAutoresizing.FlexibleBottomMargin;
+
+            View.AddSubview(button1);
+
+
+            button2.TouchUpInside += (object sender, EventArgs e) =>
+            {
+                // instantiate the alert with a title and a message
+                SIAlertView alert = new SIAlertView("Nice work!", "Congratulations on clicking the button! You truly are a credit to your species.");
+
+                alert.TransitionStyle = SIAlertViewTransitionStyle.SlideFromBottom;
+                alert.CornerRadius = 10f;
+                alert.ShadowRadius = 5f;
 
                 // Add a normal button that simply dismisses the alert view
                 alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
                 
-                alert.AddButton("Bugger Off", SIAlertViewButtonType.Destructive, (x) => { });
-
-                //alert.AddButton("Button 3", SIAlertViewButtonType.Cancel, (x) => { });
+                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, (x) => { });
 
                 // show it!
                 alert.Show();
             };
 
-            button.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin |
+            button2.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin |
                 UIViewAutoresizing.FlexibleBottomMargin;
 
-            View.AddSubview(button);
-        }
+            View.AddSubview(button2);
 
+
+            button3.TouchUpInside += (object sender, EventArgs e) =>
+            {
+                // instantiate the alert with a title and a message
+                SIAlertView alert = new SIAlertView("Nice work!", "Congratulations on clicking the button! You truly are a credit to your species.");
+
+                alert.TransitionStyle = SIAlertViewTransitionStyle.SlideFromTop;
+                alert.CornerRadius = 10f;
+                alert.ShadowRadius = 5f;
+
+                // Add a normal button that simply dismisses the alert view
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+                
+                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, (x) => { });
+
+                alert.AddButton("Cancel", SIAlertViewButtonType.Cancel, (x) => { });
+
+                // show it!
+                alert.Show();
+            };
+
+            button1.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin |
+                UIViewAutoresizing.FlexibleBottomMargin;
+
+            View.AddSubview(button3);
+
+
+            button4.TouchUpInside += (object sender, EventArgs e) =>
+            {
+                // instantiate the alert with a title and a message
+                SIAlertView alert = new SIAlertView("Nice work!", "Congratulations on clicking the button! You truly are a credit to your species.");
+
+                alert.TransitionStyle = SIAlertViewTransitionStyle.Fade;
+                alert.CornerRadius = 10f;
+                alert.ShadowRadius = 5f;
+                alert.AlwaysStackButtons = true;
+
+                // Add a normal button that simply dismisses the alert view
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+                
+                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, (x) => { });
+
+                // show it!
+                alert.Show();
+            };
+
+            button1.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin |
+                UIViewAutoresizing.FlexibleBottomMargin;
+
+            View.AddSubview(button4);
+
+
+            button5.TouchUpInside += (object sender, EventArgs e) =>
+            {
+                // instantiate the alert with a title and a message
+                SIAlertView alert = new SIAlertView("Nice work!", null);
+
+                alert.TransitionStyle = SIAlertViewTransitionStyle.SlideFromBottom;
+                alert.CornerRadius = 10f;
+                alert.ShadowRadius = 5f;
+                alert.MinimumMessageLineCount = 0;
+                
+
+                // Add a normal button that simply dismisses the alert view
+                alert.AddButton("Thank you!", SIAlertViewButtonType.Default, (x) => { });
+                
+                alert.AddButton("Bugger Off!", SIAlertViewButtonType.Destructive, (x) => { });
+
+                // show it!
+                alert.Show();
+            };
+
+            button1.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleTopMargin |
+                UIViewAutoresizing.FlexibleBottomMargin;
+
+            View.AddSubview(button5);
+        }
     }
 }
 
