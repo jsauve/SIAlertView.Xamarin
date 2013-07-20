@@ -1,4 +1,5 @@
-﻿using MonoTouch.UIKit;
+﻿using MonoTouch.Foundation;
+using MonoTouch.UIKit;
 using System;
 
 namespace SIAlert.Xamarin
@@ -7,7 +8,7 @@ namespace SIAlert.Xamarin
     {
         public string Title { get; set; }
         public SIAlertViewButtonType Type { get; set; }
-        public Action Action { get; set; }
+        public NSAction Action { get; set; }
 
         public UIColor BackgroundColor { get; set; }
 
@@ -19,7 +20,7 @@ namespace SIAlert.Xamarin
 
         public SIAlertItem() { }
 
-        public SIAlertItem(string title, SIAlertViewButtonType type, Action action)
+        public SIAlertItem(string title, SIAlertViewButtonType type, NSAction action)
         {
             Title = title;
             Type = type;

@@ -131,7 +131,7 @@ namespace SIAlert.Xamarin
         public Action<SIAlertView> WillDismissHandler;
         public Action<SIAlertView> DidDismissHandler;
 
-        public void AddButton(string title, SIAlertViewButtonType type, Action handler)
+        public void AddButton(string title, SIAlertViewButtonType type, NSAction handler)
         {
             SIAlertItem item = new SIAlertItem();
             item.Title = title;
@@ -991,7 +991,7 @@ namespace SIAlert.Xamarin
             SIAlertItem item = this._Items[button.Tag];
             if (item.Action != null)
             {
-                item.Action();
+                item.Action.Invoke();
             }
             this.DismissAnimated(true);
         }
