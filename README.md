@@ -13,11 +13,11 @@ Feel free to fix any problems and issue a pull request! Thanks!
 
 SIAlertView alertView = new SIAlertView("SIAlertView", "Sumi Interactive");
 
-alertView.AddButton("Button1", SIAlertViewButtonType.Default, (alert) => { Log("Button1 clicked!"); });
+alertView.AddButton("Button1", SIAlertViewButtonType.Default, () => { Log("Button1 clicked!"); });
 
-alertView.AddButton("Button2", SIAlertViewButtonType.Default, (alert) => { Log("Button2 clicked!"); });
+alertView.AddButton("Button2", SIAlertViewButtonType.Default, () => { Log("Button2 clicked!"); });
 
-alertView.AddButton("Button3", SIAlertViewButtonType.Default, (alert) => { Log("Button3 clicked!"); });
+alertView.AddButton("Button3", SIAlertViewButtonType.Default, () => { Log("Button3 clicked!"); });
 
 alertView.TransitionStyle = SIAlertViewTransitionStyle.Fade;
 
