@@ -1,6 +1,5 @@
 ﻿using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using System;
 
 namespace SIAlert.Xamarin
 {
@@ -17,6 +16,8 @@ namespace SIAlert.Xamarin
 
         public UIImage BackgroundImageNormal { get; set; }
         public UIImage BackgroundImageHighlighted { get; set; }
+
+        public UIFont Font { get; set; }
 
         public SIAlertItem() { }
 

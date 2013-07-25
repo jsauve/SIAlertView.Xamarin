@@ -91,7 +91,7 @@ Global
 		{CB0B3879-635E-4CC0-AF43-C09E5A94FA77}.Release|Mixed Platforms.Build.0 = Release|iPhone
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = SIAlertView.Xamarin\SIAlertView.Xamarin.csproj
+		StartupItem = SIAlertView.Xamarin.Test\SIAlertView.Xamarin.Test.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None

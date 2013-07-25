@@ -8,7 +8,7 @@
     public const float UIWindowLevelSIAlert = 1999.0f;  // don't overlap system's alert
     public const float UIWindowLevelSIAlertBackground = 1998.0f; // below the alert window
 
-    public const int MESSAGE_MIN_LINE_COUNT = 3;
+    public const int MESSAGE_MIN_LINE_COUNT = 2;
     public const int MESSAGE_MAX_LINE_COUNT = 5;
 
     public const float GAP = 10.0f;

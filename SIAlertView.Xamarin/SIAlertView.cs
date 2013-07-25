@@ -24,8 +24,10 @@ namespace SIAlert.Xamarin
         public UIColor ViewBackgroundColor { get; set; }
         public UIColor TitleColor { get; set; }
         public UIFont TitleFont { get; set; }
+        public UITextAlignment TitleAlignment { get; set; }
         public UIColor MessageColor { get; set; }
         public UIFont MessageFont { get; set; }
+        public UITextAlignment MessageAlignment { get; set; }
         public UIFont ButtonFont { get; set; }
         public float CornerRadius { get; set; }
         public float ShadowRadius { get; set; }
@@ -71,11 +73,14 @@ namespace SIAlert.Xamarin
             _Message = message;
             _Items = new List<SIAlertItem>();
 
+            // Set some defaults. These can all be overriden by setting properties.
             ViewBackgroundColor = UIColor.White;
             TitleColor = UIColor.Black;
             MessageColor = UIColor.DarkGray;
             TitleFont = UIFont.BoldSystemFontOfSize(20);
+            TitleAlignment = UITextAlignment.Center;
             MessageFont = UIFont.SystemFontOfSize(16);
+            MessageAlignment = UITextAlignment.Center;
             ButtonFont = UIFont.SystemFontOfSize(UIFont.ButtonFontSize);
             CornerRadius = 2f;
             ShadowRadius = 8f;
@@ -836,7 +841,7 @@ namespace SIAlert.Xamarin
                 if (this._TitleLabel == null)
                 {
                     this._TitleLabel = new UILabel(this.Bounds);
-                    this._TitleLabel.TextAlignment = UITextAlignment.Center;
+                    this._TitleLabel.TextAlignment = TitleAlignment;
                     this._TitleLabel.BackgroundColor = UIColor.Clear;
                     this._TitleLabel.Font = TitleFont;
                     this._TitleLabel.TextColor = TitleColor;
@@ -871,7 +876,7 @@ namespace SIAlert.Xamarin
                 if (this._MessageLabel == null)
                 {
                     this._MessageLabel = new UILabel(this.Bounds);
-                    this._MessageLabel.TextAlignment = UITextAlignment.Center;
+                    this._MessageLabel.TextAlignment = MessageAlignment;
                     this._MessageLabel.BackgroundColor = UIColor.Clear;
                     this._MessageLabel.Font = this.MessageFont;
                     this._MessageLabel.TextColor = this.MessageColor;
@@ -913,7 +918,7 @@ namespace SIAlert.Xamarin
             UIButton button = UIButton.FromType(UIButtonType.Custom);
             button.Tag = index;
             button.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
-            button.TitleLabel.Font = this.ButtonFont;
+            button.TitleLabel.Font = (item.Font != null && item.Font != this.ButtonFont) ? item.Font : this.ButtonFont;
             button.SetTitle(item.Title, UIControlState.Normal);
             UIImage normalImage = null;
             UIImage highlightedImage = null;
@@ -982,6 +987,7 @@ namespace SIAlert.Xamarin
             }
             
             button.TouchUpInside += (o, s) => { ButtonAction(button); };
+
             return button;
         }
 

@@ -33,33 +33,36 @@ namespace SIAlert.Xamarin.Test
             button4 = UIButton.FromType(UIButtonType.RoundedRect);
             button5 = UIButton.FromType(UIButtonType.RoundedRect);
 
+            float buttonsTopY = 20f;
+            float buttonGap = 10f;
+
             button1.Frame = new RectangleF(
                 View.Frame.Width / 2 - buttonWidth / 2,
-                100f,
+                buttonsTopY,
                 buttonWidth,
                 buttonHeight);
 
             button2.Frame = new RectangleF(
                 View.Frame.Width / 2 - buttonWidth / 2,
-                160f,
+                button1.Frame.Location.Y + button1.Frame.Height + buttonGap,
                 buttonWidth,
                 buttonHeight);
 
             button3.Frame = new RectangleF(
                 View.Frame.Width / 2 - buttonWidth / 2,
-                210f,
+                button2.Frame.Location.Y + button2.Frame.Height + buttonGap,
                 buttonWidth,
                 buttonHeight);
 
             button4.Frame = new RectangleF(
                 View.Frame.Width / 2 - buttonWidth / 2,
-                270f,
+                button3.Frame.Location.Y + button3.Frame.Height + buttonGap,
                 buttonWidth,
                 buttonHeight);
 
             button5.Frame = new RectangleF(
                 View.Frame.Width / 2 - buttonWidth / 2,
-                330f,
+                button4.Frame.Location.Y + button4.Frame.Height + buttonGap,
                 buttonWidth,
                 buttonHeight);
 
