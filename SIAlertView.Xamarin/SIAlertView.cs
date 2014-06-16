@@ -280,6 +280,7 @@ namespace SIAlert.Xamarin
 
             this._OldKeyWindow.MakeKeyWindow();
             this._OldKeyWindow.Hidden = false;
+			this._AlertWindow.Dispose();
         }
 
         private void DismissComplete(bool cleanup)
